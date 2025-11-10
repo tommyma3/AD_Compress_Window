@@ -143,15 +143,15 @@ def visualize_attention_to_positions(attention_history, output_dir):
     distant_attention = []
     
     for i, attn in enumerate(attention_to_positions):
-        if len(attn) > 5:
-            recent_attention.append(attn[-5:].sum())
-            distant_attention.append(attn[:-5].sum())
+        if len(attn) > 20:
+            recent_attention.append(attn[-20:].sum())
+            distant_attention.append(attn[:-20].sum())
         else:
             recent_attention.append(attn.sum())
             distant_attention.append(0)
     
     steps = range(len(recent_attention))
-    ax2.plot(steps, recent_attention, label='Recent (last 5)', linewidth=2)
+    ax2.plot(steps, recent_attention, label='Recent (last 20)', linewidth=2)
     ax2.plot(steps, distant_attention, label='Distant (rest)', linewidth=2)
     ax2.set_xlabel('Evaluation Step', fontsize=12)
     ax2.set_ylabel('Cumulative Attention', fontsize=12)
