@@ -211,7 +211,7 @@ if __name__ == '__main__':
     print("Evaluation goals: ", test_env_args)
 
     if env_name == 'darkroom':
-        envs = SubprocVecEnv([make_env(config, goal=test_env_args[5])])
+        envs = SubprocVecEnv([make_env(config, goal=test_env_args[7])])
     else:
         raise NotImplementedError(f'Environment not supported')
     

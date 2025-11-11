@@ -448,7 +448,7 @@ if __name__ == '__main__':
     
     # Generate different visualizations
     print("\n1. Creating attention heatmaps...")
-    visualize_attention_heatmaps(attention_history, output_dir, num_samples=5)
+    visualize_attention_heatmaps(attention_history, output_dir, num_samples=20)
     
     print("\n2. Analyzing attention to positions...")
     visualize_attention_to_positions(attention_history, output_dir)
