@@ -3,12 +3,12 @@ COMPRESSION STRATEGY RECOMMENDATIONS
 ================================================================================
 
 Context Statistics:
-  Average sequence length: 158.7
+  Average sequence length: 156.8
   Maximum sequence length: 160
 
 Attention Distribution:
-  Recent context (5 steps): 4.3%
-  Distant context: 95.7%
+  Recent context (5 steps): 7.7%
+  Distant context: 92.3%
 
 Recommended Compression Strategies:
 
@@ -31,7 +31,7 @@ Implementation Suggestions:
 
   a) Start simple: Fixed window + attention pooling
   b) Compression interval: Every 10-20 steps
-  c) Target compressed length: 47-79
+  c) Target compressed length: 47-78
   d) Preserve query token (current state) always
 
 ================================================================================

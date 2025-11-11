@@ -60,8 +60,8 @@ def visualize_attention_heatmaps(attention_history, output_dir, num_samples=5):
             for head_idx in range(num_heads):
                 ax = axes[layer_idx, head_idx]
                 
-                # Plot attention heatmap
-                im = ax.imshow(attn[head_idx], cmap='viridis', aspect='auto', 
+                # Plot attention heatmap with high contrast colormap (reversed)
+                im = ax.imshow(attn[head_idx], cmap='hot_r', aspect='auto', 
                               vmin=0, vmax=1)
                 ax.set_title(f'Layer {layer_idx+1}, Head {head_idx+1}')
                 ax.set_xlabel('Key Position')
@@ -448,7 +448,7 @@ if __name__ == '__main__':
     
     # Generate different visualizations
     print("\n1. Creating attention heatmaps...")
-    visualize_attention_heatmaps(attention_history, output_dir, num_samples=20)
+    visualize_attention_heatmaps(attention_history, output_dir, num_samples=50)
     
     print("\n2. Analyzing attention to positions...")
     visualize_attention_to_positions(attention_history, output_dir)

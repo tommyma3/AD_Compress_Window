@@ -211,7 +211,7 @@ if __name__ == '__main__':
     print("Evaluation goals: ", test_env_args)
 
     if env_name == 'darkroom':
-        envs = SubprocVecEnv([make_env(config, goal=test_env_args[7])])
+        envs = SubprocVecEnv([make_env(config, goal=test_env_args[3])])
     else:
         raise NotImplementedError(f'Environment not supported')
     
@@ -225,7 +225,7 @@ if __name__ == '__main__':
     # Evaluate with attention capture
     # Use a reasonable number of episodes for analysis (not just timesteps)
     # Typical episode length is config['horizon'], so run multiple episodes
-    eval_episodes = 500  
+    eval_episodes = 200
     eval_timesteps = config['horizon'] * eval_episodes
     
     print(f"Running evaluation for {eval_episodes} episodes (~{eval_timesteps} steps)")
@@ -262,6 +262,7 @@ if __name__ == '__main__':
     print(f"Saved attention history to {attention_path}")
     
     print("\nRewards:")
+    print(results['reward_episode'])
     print(f"  Mean reward: {results['reward_episode'].mean():.2f}")
     print(f"  Std deviation: {results['reward_episode'].std():.2f}")
     
