@@ -14,7 +14,7 @@ class AD(torch.nn.Module):
         self.device = config['device']
         self.n_transit = config['n_transit']
         self.max_seq_length = config['n_transit']
-        self.mixed_precision = config['mixed_precision']
+        self.mixed_precision = config.get('mixed_precision', 'fp32')
         self.grid_size = config['grid_size']
 
         tf_n_embd = config['tf_n_embd']
