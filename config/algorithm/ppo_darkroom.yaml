@@ -1,7 +1,7 @@
 include: config/algorithm/ppo_base.yaml
 
-n_steps: 20
-batch_size: 50
+n_steps: 80
+batch_size: 40
 n_epochs: 20
 alg_seed: 42
 total_source_timesteps: 100000
