@@ -42,6 +42,40 @@ class AD(torch.nn.Module):
         self.loss_fn = nn.CrossEntropyLoss(reduction='mean', label_smoothing=config['label_smoothing'])
 
         nn.init.trunc_normal_(self.pos_embedding, std=0.02)
+        
+        # Compression settings for evaluation
+        self.enable_compression = config.get('enable_compression', False)
+        self.compression_ratio = config.get('compression_ratio', 0.5)
+        print(f"Compression enabled: {self.enable_compression}, ratio: {self.compression_ratio}")
+
+    def _compress_context_uniform(self, context_embed, query_embed):
+        """
+        Compress context using uniform sampling when max length is reached.
+        
+        Args:
+            context_embed: (batch, context_len, emb_dim) - context embeddings
+            query_embed: (batch, 1, emb_dim) - query embedding
+        
+        Returns:
+            compressed_input: (batch, compressed_len + 1, emb_dim) - compressed context + query
+        """
+        batch_size, context_len, emb_dim = context_embed.shape
+        
+        # Calculate target length (compress to half)
+        target_len = max(1, int(context_len * self.compression_ratio))
+        
+        # Generate uniformly spaced indices
+        indices = torch.linspace(0, context_len - 1, target_len, device=context_embed.device).long()
+        
+        # Sample context at these indices
+        compressed_context = context_embed[:, indices, :]
+        
+        # Concatenate with query
+        compressed_input, _ = pack([compressed_context, query_embed], 'b * d')
+        
+        print(f"Compressed context from {context_len} to {target_len} tokens (ratio: {target_len/context_len:.2f})")
+        
+        return compressed_input
 
     def _apply_positional_embedding(self, x):
         seq_len = x.size(1)
@@ -172,9 +206,18 @@ class AD(torch.nn.Module):
 
             if transformer_input.size(1) > 1:
                 context_embed, _ = pack([transformer_input[:, :-1], context_embed], 'e * h')
-                context_embed = context_embed[:, -(self.n_transit-1):]
-
-            transformer_input, _ = pack([context_embed, query_states_embed], 'e * h')
+                
+                # Check if compression is needed
+                if self.enable_compression and context_embed.size(1) >= self.n_transit - 1:
+                    # Compress context when max length reached
+                    transformer_input = self._compress_context_uniform(context_embed, query_states_embed)
+                    print(f"Step {step}: Compression triggered at length {context_embed.size(1)}")
+                else:
+                    # Normal truncation to maintain max length
+                    context_embed = context_embed[:, -(self.n_transit-1):]
+                    transformer_input, _ = pack([context_embed, query_states_embed], 'e * h')
+            else:
+                transformer_input, _ = pack([context_embed, query_states_embed], 'e * h')
 
         outputs['reward_episode'] = np.stack(outputs['reward_episode'], axis=1)
 
